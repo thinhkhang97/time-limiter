@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const remainingTime = result.todayRemainingTime || 0; // Default to 0
     updateRemainingProgessBar(remainingTime, dailyLimit);
 
-    limitInput.value = limit; // Set input field to current limit
+    limitInput.value = limit / 60; // Set input field to current limit
     currentLimitDisplay.textContent = `${formatTime(limit)}`;
     remainingTimeDisplay.textContent = formatTime(remainingTime);
 
