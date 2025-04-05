@@ -1,4 +1,4 @@
-const DEFAULT_DAILY_LIMIT = 60;
+const DEFAULT_DAILY_LIMIT = 60 * 60;
 
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 let lastDate = getTodayString();

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Youtube Time Limiter",
+  "name": "Time Limiter",
   "version": "1.0",
-  "description": "Limit the time you spend on Youtube",
+  "description": "Limit the time you spend on social media",
   "permissions": ["storage", "tabs", "alarms"],
   "background": {
     "service_worker": "background.js"
