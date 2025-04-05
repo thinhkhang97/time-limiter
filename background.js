@@ -37,8 +37,14 @@ function isNewDate() {
   );
 }
 
-function isYoutubeUrl(url) {
-  return url.includes("youtube.com");
+function isSocialMediaUrl(url) {
+  return (
+    url.includes("youtube.com") ||
+    url.includes("instagram.com") ||
+    url.includes("netflix.com") ||
+    url.includes("tiktok.com") ||
+    url.includes("facebook.com")
+  );
 }
 
 function updateUserRemainingTime(remainingTime) {
@@ -125,7 +131,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     startTracking();
   } else {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
-      if (isYoutubeUrl(tab.url)) {
+      if (isSocialMediaUrl(tab.url)) {
         youtubeTabsSet.add(tab.id);
         startTracking();
       } else {
@@ -136,7 +142,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (isYoutubeUrl(tab.url)) {
+  if (isSocialMediaUrl(tab.url)) {
     if (changeInfo.status === "complete") {
       youtubeTabsSet.add(tabId);
       startTracking();
