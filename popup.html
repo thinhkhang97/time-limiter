@@ -15,6 +15,7 @@
       :root {
         /* Dark Theme Palette */
         --bg-color: #2d3748; /* Dark Slate */
+        --bg-gradient-end: #1a202c; /* Darker Slate for gradient */
         --text-color: #e2e8f0; /* Light Slate */
         --text-strong-color: #f7fafc; /* Very Light Slate */
         --text-muted-color: #a0aec0; /* Medium Slate */
@@ -26,57 +27,67 @@
         --accent-active-color: #2b6cb0; /* Even Darker Blue */
         --success-color: #68d391; /* Green */
         --success-pulse-color: #48bb78; /* Darker Green */
+
+        /* Progress Bar Colors */
+        --progress-track-color: #1a202c; /* Darker background for track */
+        --progress-fill-start: #4299e1; /* Blue */
+        --progress-fill-end: #38b2ac; /* Cyan/Teal */
       }
 
       body {
         font-family: "Inter", sans-serif;
-        padding: 15px; /* Slightly reduced padding for smaller popups */
-        min-width: 260px; /* Slightly reduced min-width */
-        background-color: var(--bg-color);
+        padding: 15px;
+        min-width: 260px;
+        /* Added subtle background gradient */
+        background: linear-gradient(
+          to bottom,
+          var(--bg-color),
+          var(--bg-gradient-end)
+        );
         color: var(--text-color);
         border-radius: 8px;
+        /* Ensure gradient covers the whole body if content is short */
+        min-height: 150px; /* Adjust as needed based on content */
       }
 
       h3 {
         margin-top: 0;
         color: var(--text-strong-color);
         text-align: center;
-        font-size: 1.3em; /* Slightly smaller heading */
+        font-size: 1.3em;
         font-weight: 700;
-        margin-bottom: 20px; /* Reduced bottom margin */
+        margin-bottom: 20px;
       }
 
       .setting {
-        margin-bottom: 20px; /* Reduced bottom margin */
+        margin-bottom: 20px;
       }
 
       label {
         display: block;
-        margin-bottom: 6px; /* Reduced margin */
+        margin-bottom: 6px;
         font-weight: 600;
         color: var(--text-muted-color);
-        font-size: 0.95em; /* Slightly smaller label */
+        font-size: 0.95em;
       }
 
-      /* Flex container for input and button */
       .input-button-row {
         display: flex;
-        align-items: center; /* Vertically align items */
-        gap: 3%; /* Space between input and button */
+        align-items: center;
+        gap: 3%;
       }
 
       input[type="number"] {
         background-color: var(--input-bg-color);
         color: var(--text-color);
-        padding: 8px 10px; /* Adjusted padding */
+        padding: 8px 10px;
         border: 1px solid var(--input-border-color);
         border-radius: 6px;
-        font-size: 0.95em; /* Adjusted font size */
+        font-size: 0.95em;
         margin-bottom: 0;
-        width: 62%; /* Adjusted width */
+        width: 62%;
         box-sizing: border-box;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        /* Removed margin-right, gap handles spacing */
       }
 
       input[type="number"]:focus {
@@ -85,7 +96,6 @@
         box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
       }
 
-      /* Hide number input spinners */
       input::-webkit-outer-spin-button,
       input::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -99,19 +109,18 @@
       button {
         background-color: var(--accent-color);
         color: white;
-        padding: 8px 10px; /* Reduced padding */
+        padding: 8px 10px;
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 0.9em; /* Reduced font size */
+        font-size: 0.9em;
         font-weight: 600;
         transition: background-color 0.2s ease, transform 0.1s ease;
-        width: 35%; /* Adjusted width */
+        width: 35%;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        /* Removed display and vertical-align, flex handles layout */
-        text-align: center; /* Ensure text is centered */
-        line-height: 1.4; /* Adjust line-height for vertical centering */
-        flex-shrink: 0; /* Prevent button from shrinking too much */
+        text-align: center;
+        line-height: 1.4;
+        flex-shrink: 0;
       }
 
       button:hover {
@@ -125,16 +134,41 @@
         box-shadow: none;
       }
 
+      /* --- Progress Bar Styles --- */
+      .progress-container {
+        width: 100%; /* Full width within popup */
+        height: 8px; /* Slimmer bar for popup */
+        background-color: var(--progress-track-color);
+        border-radius: 4px; /* Half of height */
+        margin-bottom: 15px; /* Space before status text */
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        /* IMPORTANT: Width should be set dynamically by popup.js */
+        /* Example: Set initial width to 100% or 0% as placeholder */
+        width: 0%;
+        background: linear-gradient(
+          to right,
+          var(--progress-fill-start),
+          var(--progress-fill-end)
+        );
+        border-radius: 4px;
+        transition: width 0.3s ease-out; /* Smooth transition for updates */
+      }
+      /* --- End Progress Bar Styles --- */
+
       .status {
-        margin-top: 20px; /* Reduced margin */
-        font-size: 0.9em; /* Slightly smaller status text */
+        /* margin-top: 20px; Removed margin-top, progress bar adds space */
+        font-size: 0.9em;
         color: var(--text-muted-color);
         border-top: 1px solid var(--border-color);
-        padding-top: 12px; /* Reduced padding */
+        padding-top: 12px;
       }
 
       .status p {
-        margin: 6px 0; /* Reduced margin */
+        margin: 6px 0;
       }
 
       .status strong {
@@ -143,16 +177,15 @@
       }
 
       #save-status {
-        margin-top: 12px; /* Reduced margin */
+        margin-top: 12px;
         font-weight: 600;
         color: var(--success-color);
         height: 1.2em;
         text-align: center;
         transition: color 0.3s ease;
-        font-size: 0.9em; /* Match status text size */
+        font-size: 0.9em;
       }
 
-      /* Updated pulse animation colors */
       .saved-animation {
         animation: pulse 1s ease;
       }
@@ -180,6 +213,10 @@
       </div>
     </div>
     <div id="save-status"></div>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="time-progress-bar"></div>
+    </div>
 
     <div class="status">
       <p>Time left: <strong id="remaining-time">...</strong></p>

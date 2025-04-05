@@ -5,6 +5,9 @@ const saveButton = document.getElementById("save-button");
 const remainingTimeDisplay = document.getElementById("remaining-time");
 const currentLimitDisplay = document.getElementById("current-limit");
 const saveStatusDisplay = document.getElementById("save-status");
+const progressBar = document.getElementById("time-progress-bar");
+
+let dailyLimit = 60;
 
 // Format seconds into minutes and seconds string
 function formatTime(totalSeconds) {
@@ -19,7 +22,9 @@ function formatTime(totalSeconds) {
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(["dailyLimit", "todayRemainingTime"], (result) => {
     const limit = result.dailyLimit || 60; // Default to 60 if not set
+    dailyLimit = limit;
     const remainingTime = result.todayRemainingTime || 0; // Default to 0
+    updateRemainingProgessBar(remainingTime, dailyLimit);
 
     limitInput.value = limit; // Set input field to current limit
     currentLimitDisplay.textContent = `${formatTime(limit)}`;
@@ -55,6 +60,12 @@ saveButton.addEventListener("click", () => {
   });
 });
 
+function updateRemainingProgessBar(remainingTime, dailyLimit = 60) {
+  let percentage = (remainingTime / dailyLimit) * 100;
+  percentage = Math.max(0, Math.min(percentage, 100));
+  progressBar.style.width = `${percentage}%`;
+}
+
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === "local") {
     // Check if 'timeSpentToday' was one of the changed items
@@ -65,6 +76,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       );
       // Update the display in the popup immediately
       remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
+      updateRemainingProgessBar(todayRemainingTime, dailyLimit);
     }
     // You could also listen for changes to dailyLimit if needed,
     // though the input field might become out of sync if changed elsewhere.
