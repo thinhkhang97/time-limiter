@@ -47,12 +47,18 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
+  if (newLimit > 120) {
+    saveStatusDisplay.textContent = "Limit cannot be greater than 120 minutes!";
+    saveStatusDisplay.style.color = "red";
+    return;
+  }
+
   chrome.storage.local.set({ dailyLimit: newLimit * 60 }, () => {
     console.log(`New daily limit saved: ${newLimit} minutes`);
     currentLimitDisplay.textContent = `${newLimit} min`; // Update display immediately
-    saveStatusDisplay.textContent = "Limit Saved!";
+    saveStatusDisplay.textContent =
+      "Limit updated and would be effective tomorrow!";
     saveStatusDisplay.style.color = "green";
-    updateRemainingProgessBar(remainingTime, newLimit);
 
     // Clear the status message after a few seconds
     setTimeout(() => {
@@ -72,9 +78,6 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     // Check if 'timeSpentToday' was one of the changed items
     if (changes.todayRemainingTime) {
       const todayRemainingTime = changes.todayRemainingTime.newValue || 0;
-      console.log(
-        `Storage changed: todayRemainingTime updated to ${todayRemainingTime}s`
-      );
       // Update the display in the popup immediately
       remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
       updateRemainingProgessBar(todayRemainingTime, dailyLimit);
@@ -83,10 +86,8 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     // though the input field might become out of sync if changed elsewhere.
     if (changes.dailyLimit) {
       const newLimitValue = changes.dailyLimit.newValue || 60;
-      console.log(
-        `Storage changed: dailyLimit updated to ${newLimitValue} min`
-      );
       currentLimitDisplay.textContent = `${newLimitValue} min`;
+      updateRemainingProgessBar(todayRemainingTime, newLimitValue);
     }
   }
 });

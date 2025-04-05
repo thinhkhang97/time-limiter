@@ -1,4 +1,4 @@
-const DEFAULT_DAILY_LIMIT = 60;
+const DEFAULT_DAILY_LIMIT = 60 * 60 * 1.5;
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 
 const state = {
@@ -87,13 +87,13 @@ async function start() {
       if (changes.dailyLimit) {
         console.log("dailyLimit changed", state.dailyLimit, changes.dailyLimit);
         const newDailyLimit = changes.dailyLimit.newValue;
-        const newRemainingTime =
-          newDailyLimit -
-          ((state.dailyLimit || DEFAULT_DAILY_LIMIT) -
-            state.todayRemainingTime);
-        updateUserRemainingTime(
-          Math.min(Math.max(0, newRemainingTime), newDailyLimit)
-        );
+        // const newRemainingTime =
+        //   newDailyLimit -
+        //   ((state.dailyLimit || DEFAULT_DAILY_LIMIT) -
+        //     state.todayRemainingTime);
+        // updateUserRemainingTime(
+        //   Math.min(Math.max(0, newRemainingTime), newDailyLimit)
+        // );
         state.dailyLimit = newDailyLimit;
       }
     }
