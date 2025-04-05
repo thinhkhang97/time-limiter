@@ -1,4 +1,4 @@
-const DEFAULT_DAILY_LIMIT = 60 * 60;
+const DEFAULT_DAILY_LIMIT = 60;
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 
 const state = {
@@ -87,10 +87,12 @@ async function start() {
       if (changes.dailyLimit) {
         console.log("dailyLimit changed", state.dailyLimit, changes.dailyLimit);
         const newDailyLimit = changes.dailyLimit.newValue;
-        updateUserRemainingTime(
+        const newRemainingTime =
           newDailyLimit -
-            ((state.dailyLimit || DEFAULT_DAILY_LIMIT) -
-              state.todayRemainingTime)
+          ((state.dailyLimit || DEFAULT_DAILY_LIMIT) -
+            state.todayRemainingTime);
+        updateUserRemainingTime(
+          Math.min(Math.max(0, newRemainingTime), newDailyLimit)
         );
         state.dailyLimit = newDailyLimit;
       }
@@ -146,7 +148,7 @@ function updateUserRemainingTime(remainingTime = state.dailyLimit) {
 }
 
 function openBlockedPage() {
-  for (const tabId of socialMediaTabsSet) {
+  for (const tabId of state.socialMediaTabsSet) {
     chrome.tabs.update(tabId, { url: BLOCKED_URL });
   }
 }
