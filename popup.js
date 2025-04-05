@@ -9,9 +9,10 @@ const saveStatusDisplay = document.getElementById("save-status");
 // Format seconds into minutes and seconds string
 function formatTime(totalSeconds) {
   if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  return `${minutes} min ${seconds} sec`;
+  return `${hours}h ${minutes}m ${seconds}s`;
 }
 
 // Load current settings when the popup opens
@@ -21,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const remainingTime = result.todayRemainingTime || 0; // Default to 0
 
     limitInput.value = limit; // Set input field to current limit
-    currentLimitDisplay.textContent = `${limit} min`;
-    remainingTimeDisplay.textContent = formatTime(remainingTime / 1000);
+    currentLimitDisplay.textContent = `${formatTime(limit)}`;
+    remainingTimeDisplay.textContent = formatTime(remainingTime);
 
     console.log("Popup loaded:", result);
   });
@@ -63,7 +64,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
         `Storage changed: todayRemainingTime updated to ${todayRemainingTime}s`
       );
       // Update the display in the popup immediately
-      remainingTimeDisplay.textContent = formatTime(todayRemainingTime / 1000);
+      remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
     }
     // You could also listen for changes to dailyLimit if needed,
     // though the input field might become out of sync if changed elsewhere.

@@ -1,4 +1,4 @@
-const DEFAULT_DAILY_LIMIT = 30 * 1000;
+const DEFAULT_DAILY_LIMIT = 60 * 60;
 
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 let lastDate = getTodayString();
@@ -65,6 +65,7 @@ function resetTracking() {
   updateUserRemainingTime(dailyLimit);
   clearInterval(intervalId);
   intervalId = null;
+  todayRemainingTime = dailyLimit;
 }
 
 function startTracking() {
@@ -72,7 +73,7 @@ function startTracking() {
 
   if (!intervalId) {
     intervalId = setInterval(() => {
-      updateUserRemainingTime(todayRemainingTime - 1000);
+      updateUserRemainingTime(todayRemainingTime - 1);
       console.log("🚀 ~ todayRemainingTime:", todayRemainingTime);
       if (todayRemainingTime <= 0) {
         blockUser();
@@ -110,12 +111,8 @@ chrome.runtime.onInstalled.addListener(() => {
   resetTracking();
   chrome.storage.local.set({
     currentDay: getTodayString(),
-  });
-  chrome.storage.local.get("dailyLimit", (result) => {
-    dailyLimit = result.dailyLimit || DEFAULT_DAILY_LIMIT;
-    chrome.storage.local.get("todayRemainingTime", (result) => {
-      todayRemainingTime = result.todayRemainingTime || dailyLimit;
-    });
+    dailyLimit: DEFAULT_DAILY_LIMIT,
+    todayRemainingTime: DEFAULT_DAILY_LIMIT,
   });
 });
 
@@ -151,11 +148,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
+  console.log("onChanged", changes, namespace);
   if (namespace === "local") {
     if (changes.dailyLimit) {
-      const newDailyLimit = changes.dailyLimit.newValue * 1000 * 60;
+      console.log("dailyLimit changed", dailyLimit, changes.dailyLimit);
+      const newDailyLimit = changes.dailyLimit.newValue * 60;
       updateUserRemainingTime(
-        newDailyLimit - (dailyLimit - todayRemainingTime)
+        newDailyLimit -
+          ((dailyLimit || DEFAULT_DAILY_LIMIT) - todayRemainingTime)
       );
       dailyLimit = newDailyLimit;
     }
