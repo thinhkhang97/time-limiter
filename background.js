@@ -5,6 +5,7 @@ let lastDate = getTodayString();
 
 let intervalId = null;
 let todayRemainingTime;
+let dailyLimit = DEFAULT_DAILY_LIMIT;
 const youtubeTabsSet = new Set();
 
 function getTodayString() {
@@ -61,7 +62,7 @@ function blockUser() {
 
 function resetTracking() {
   console.log("Resetting tracking");
-  updateUserRemainingTime(DEFAULT_DAILY_LIMIT);
+  updateUserRemainingTime(dailyLimit);
   clearInterval(intervalId);
   intervalId = null;
 }
@@ -96,8 +97,11 @@ chrome.runtime.onStartup.addListener(() => {
   chrome.storage.local.set({
     currentDay: getTodayString(),
   });
-  chrome.storage.local.get("todayRemainingTime", (result) => {
-    todayRemainingTime = result.todayRemainingTime || DEFAULT_DAILY_LIMIT;
+  chrome.storage.local.get("dailyLimit", (result) => {
+    dailyLimit = result.dailyLimit || DEFAULT_DAILY_LIMIT;
+    chrome.storage.local.get("todayRemainingTime", (result) => {
+      todayRemainingTime = result.todayRemainingTime || dailyLimit;
+    });
   });
 });
 
@@ -107,12 +111,16 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     currentDay: getTodayString(),
   });
-  chrome.storage.local.get("todayRemainingTime", (result) => {
-    todayRemainingTime = result.todayRemainingTime || DEFAULT_DAILY_LIMIT;
+  chrome.storage.local.get("dailyLimit", (result) => {
+    dailyLimit = result.dailyLimit || DEFAULT_DAILY_LIMIT;
+    chrome.storage.local.get("todayRemainingTime", (result) => {
+      todayRemainingTime = result.todayRemainingTime || dailyLimit;
+    });
   });
 });
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
+  console.log("onActivated", activeInfo);
   if (isNewDate()) {
     resetTracking();
   }
@@ -139,5 +147,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   } else {
     youtubeTabsSet.delete(tabId);
     stopTracking();
+  }
+});
+
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === "local") {
+    if (changes.dailyLimit) {
+      const newDailyLimit = changes.dailyLimit.newValue * 1000 * 60;
+      updateUserRemainingTime(
+        newDailyLimit - (dailyLimit - todayRemainingTime)
+      );
+      dailyLimit = newDailyLimit;
+    }
   }
 });
