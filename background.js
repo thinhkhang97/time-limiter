@@ -47,7 +47,7 @@ function isSocialMediaUrl(url) {
   );
 }
 
-function updateUserRemainingTime(remainingTime) {
+function updateUserRemainingTime(remainingTime = dailyLimit) {
   todayRemainingTime = remainingTime;
   chrome.storage.local.set({
     todayRemainingTime: remainingTime,
