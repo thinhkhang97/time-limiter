@@ -152,7 +152,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === "local") {
     if (changes.dailyLimit) {
       console.log("dailyLimit changed", dailyLimit, changes.dailyLimit);
-      const newDailyLimit = changes.dailyLimit.newValue * 60;
+      const newDailyLimit = changes.dailyLimit.newValue;
       updateUserRemainingTime(
         newDailyLimit -
           ((dailyLimit || DEFAULT_DAILY_LIMIT) - todayRemainingTime)

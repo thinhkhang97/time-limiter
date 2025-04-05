@@ -22,23 +22,31 @@
         --border-color: #4a5568; /* Medium-Dark Slate */
         --input-bg-color: #4a5568; /* Medium-Dark Slate */
         --input-border-color: #718096; /* Medium Slate */
-        --accent-color: #4299e1; /* Blue */
-        --accent-hover-color: #3182ce; /* Darker Blue */
-        --accent-active-color: #2b6cb0; /* Even Darker Blue */
+        /* --accent-color: #4299e1; /* Blue - No longer primary for button */
+        /* --accent-hover-color: #3182ce; /* Darker Blue - No longer primary for button hover */
+        /* --accent-active-color: #2b6cb0; /* Even Darker Blue - No longer primary for button active */
         --success-color: #68d391; /* Green */
         --success-pulse-color: #48bb78; /* Darker Green */
 
-        /* Progress Bar Colors */
+        /* Progress Bar & Button Gradient Colors */
         --progress-track-color: #1a202c; /* Darker background for track */
-        --progress-fill-start: #4299e1; /* Blue */
-        --progress-fill-end: #38b2ac; /* Cyan/Teal */
+        --fill-start: #4299e1; /* Blue */
+        --fill-end: #38b2ac; /* Cyan/Teal */
+
+        /* Button Hover/Active Gradient Colors */
+        --fill-hover-start: #3182ce; /* Darker Blue */
+        --fill-hover-end: #2c9a94; /* Darker Cyan/Teal */
+        --fill-active-start: #2b6cb0; /* Even Darker Blue */
+        --fill-active-end: #26817d; /* Even Darker Cyan/Teal */
+
+        /* Fallback error color (if needed by JS) */
+        --error-color: #e53e3e;
       }
 
       body {
         font-family: "Inter", sans-serif;
         padding: 15px;
         min-width: 260px;
-        /* Added subtle background gradient */
         background: linear-gradient(
           to bottom,
           var(--bg-color),
@@ -46,8 +54,7 @@
         );
         color: var(--text-color);
         border-radius: 8px;
-        /* Ensure gradient covers the whole body if content is short */
-        min-height: 150px; /* Adjust as needed based on content */
+        min-height: 150px;
       }
 
       h3 {
@@ -92,8 +99,10 @@
 
       input[type="number"]:focus {
         outline: none;
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+        border-color: var(
+          --fill-start
+        ); /* Use gradient start color for focus */
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3); /* Keep blue shadow for consistency */
       }
 
       input::-webkit-outer-spin-button,
@@ -107,7 +116,12 @@
       }
 
       button {
-        background-color: var(--accent-color);
+        /* Apply gradient background */
+        background: linear-gradient(
+          to right,
+          var(--fill-start, #4299e1),
+          var(--fill-end, #38b2ac)
+        );
         color: white;
         padding: 8px 10px;
         border: none;
@@ -115,7 +129,8 @@
         cursor: pointer;
         font-size: 0.9em;
         font-weight: 600;
-        transition: background-color 0.2s ease, transform 0.1s ease;
+        /* Transition background (might not be smooth for gradients) and transform */
+        transition: background 0.2s ease, transform 0.1s ease, filter 0.2s ease;
         width: 35%;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         text-align: center;
@@ -124,43 +139,55 @@
       }
 
       button:hover {
-        background-color: var(--accent-hover-color);
+        /* Apply darker gradient on hover */
+        background: linear-gradient(
+          to right,
+          var(--fill-hover-start, #3182ce),
+          var(--fill-hover-end, #2c9a94)
+        );
         transform: translateY(-1px);
+        /* Optional: Add brightness filter as another way to darken */
+        /* filter: brightness(90%); */
       }
 
       button:active {
-        background-color: var(--accent-active-color);
+        /* Apply even darker gradient on active */
+        background: linear-gradient(
+          to right,
+          var(--fill-active-start, #2b6cb0),
+          var(--fill-active-end, #26817d)
+        );
         transform: translateY(0);
         box-shadow: none;
+        /* Optional: Add brightness filter */
+        /* filter: brightness(80%); */
       }
 
       /* --- Progress Bar Styles --- */
       .progress-container {
-        width: 100%; /* Full width within popup */
-        height: 8px; /* Slimmer bar for popup */
+        width: 100%;
+        height: 8px;
         background-color: var(--progress-track-color);
-        border-radius: 4px; /* Half of height */
-        margin-bottom: 15px; /* Space before status text */
+        border-radius: 4px;
+        margin-bottom: 15px;
         overflow: hidden;
       }
 
       .progress-bar {
         height: 100%;
-        /* IMPORTANT: Width should be set dynamically by popup.js */
-        /* Example: Set initial width to 100% or 0% as placeholder */
-        width: 0%;
+        /* Width set by JS */
+        width: 0%; /* Default to 0% width */
         background: linear-gradient(
           to right,
-          var(--progress-fill-start),
-          var(--progress-fill-end)
+          var(--fill-start),
+          var(--fill-end)
         );
         border-radius: 4px;
-        transition: width 0.3s ease-out; /* Smooth transition for updates */
+        transition: width 0.3s ease-out;
       }
       /* --- End Progress Bar Styles --- */
 
       .status {
-        /* margin-top: 20px; Removed margin-top, progress bar adds space */
         font-size: 0.9em;
         color: var(--text-muted-color);
         border-top: 1px solid var(--border-color);

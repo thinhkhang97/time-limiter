@@ -47,7 +47,7 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
-  chrome.storage.local.set({ dailyLimit: newLimit }, () => {
+  chrome.storage.local.set({ dailyLimit: newLimit * 60 }, () => {
     console.log(`New daily limit saved: ${newLimit} minutes`);
     currentLimitDisplay.textContent = `${newLimit} min`; // Update display immediately
     saveStatusDisplay.textContent = "Limit Saved!";
