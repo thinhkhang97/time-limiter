@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Youtube Time Limiter",
+  "version": "1.0",
+  "description": "Limit the time you spend on Youtube",
+  "permissions": ["storage", "tabs", "alarms"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["*://*.youtube.com/*"]
+}
