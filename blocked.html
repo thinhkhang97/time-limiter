@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time for a Break!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Define color variables (optional, but good practice) */
+      :root {
+        --primary-color: #3498db; /* Blue */
+        --secondary-color: #2ecc71; /* Green */
+        --light-bg-color: #f8f9fa;
+        --dark-text-color: #343a40;
+        --gray-text-color: #4a5568;
+        --light-gray-text-color: #718096;
+        --border-color: #e2e8f0;
+        --white-color: #ffffff;
+
+        /* Suggestion box colors */
+        --blue-bg: #eff6ff;
+        --blue-text: #1e40af;
+        --green-bg: #f0fdf4;
+        --green-text: #166534;
+        --purple-bg: #faf5ff;
+        --purple-text: #5b21b6;
+      }
+
+      /* Basic Reset & Body Styling */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--dark-text-color);
+        background: linear-gradient(
+          to bottom right,
+          rgba(52, 152, 219, 0.1),
+          var(--light-bg-color),
+          rgba(46, 204, 113, 0.1)
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem; /* p-6 */
+      }
+
+      /* Main Content Container */
+      .content-container {
+        background-color: var(--white-color);
+        padding: 2rem; /* p-8 */
+        border-radius: 0.75rem; /* rounded-xl */
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+        max-width: 42rem; /* max-w-2xl */
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .content-container:hover {
+        transform: scale(1.02);
+      }
+
+      /* Headings and Text */
+      .main-heading {
+        font-size: 1.875rem; /* text-3xl */
+        font-weight: 700; /* font-bold */
+        color: var(--primary-color);
+        margin-bottom: 1rem; /* mb-4 */
+        margin-top: 1rem; /* mt-4 */
+      }
+
+      .info-text {
+        font-size: 1.125rem; /* text-lg */
+        color: var(--gray-text-color); /* text-gray-700 approximation */
+        margin-bottom: 2rem; /* mb-8 */
+      }
+
+      .suggestions-heading {
+        font-size: 1.5rem; /* text-2xl */
+        font-weight: 600; /* font-semibold */
+        color: var(--secondary-color);
+        margin-bottom: 1.5rem; /* mb-6 */
+      }
+
+      .footer-text {
+        margin-top: 2.5rem; /* mt-10 */
+        font-size: 0.875rem; /* text-sm */
+        color: #a0aec0; /* text-gray-500 approximation */
+      }
+
+      /* Suggestions Section */
+      .suggestions-section {
+        border-top: 1px solid var(--border-color); /* border-t border-gray-200 */
+        padding-top: 2rem; /* pt-8 */
+      }
+
+      .suggestions-grid {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
+        gap: 1.5rem; /* gap-6 */
+      }
+
+      .suggestion-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem; /* p-4 */
+        border-radius: 0.5rem; /* rounded-lg */
+        transition: box-shadow 0.2s ease-in-out;
+      }
+
+      .suggestion-box:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
+      }
+
+      .suggestion-box h3 {
+        font-weight: 600; /* font-semibold */
+        margin-bottom: 0.25rem; /* mb-1 */
+        padding-top: 0.75rem; /* pt-3 */
+      }
+
+      .suggestion-box p {
+        font-size: 0.875rem; /* text-sm */
+        color: var(--light-gray-text-color); /* text-gray-600 approximation */
+      }
+
+      /* Specific Suggestion Box Styles */
+      .suggestion-box.blue {
+        background-color: var(--blue-bg);
+      }
+      .suggestion-box.blue h3 {
+        color: var(--blue-text);
+      }
+
+      .suggestion-box.green {
+        background-color: var(--green-bg);
+      }
+      .suggestion-box.green h3 {
+        color: var(--green-text);
+      }
+
+      .suggestion-box.purple {
+        background-color: var(--purple-bg);
+      }
+      .suggestion-box.purple h3 {
+        color: var(--purple-text);
+      }
+
+      /* Responsive Design - Media Queries */
+      /* Small screens and up (sm: 640px) */
+      @media (min-width: 640px) {
+        .suggestions-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr)); /* sm:grid-cols-3 */
+        }
+      }
+
+      /* Medium screens and up (md: 768px) */
+      @media (min-width: 768px) {
+        .content-container {
+          padding: 3rem; /* md:p-12 */
+        }
+        .main-heading {
+          font-size: 2.25rem; /* md:text-4xl */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-container">
+      <h1 class="main-heading">Time for a Digital Detox!</h1>
+
+      <p class="info-text">
+        Looks like you've spent a bit too much time scrolling today. This site
+        is temporarily blocked to help you take a healthy break.
+      </p>
+
+      <div class="suggestions-section">
+        <h2 class="suggestions-heading">Why not try...</h2>
+        <div class="suggestions-grid">
+          <div class="suggestion-box blue">
+            <h3>Stretch It Out</h3>
+            <p>Stand up, walk around, and give your body a good stretch.</p>
+          </div>
+
+          <div class="suggestion-box green">
+            <h3>Get Some Fresh Air</h3>
+            <p>Step outside, enjoy the sunlight, or take a short walk.</p>
+          </div>
+
+          <div class="suggestion-box purple">
+            <h3>Learn Something</h3>
+            <p>Read a book, listen to a podcast, or learn a new skill.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="footer-text">
+        Your focus and well-being matter. You'll be able to access this site
+        again later.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,4 +1,6 @@
-const DEFAULT_REMAINING_TIME = 30 * 1000;
+const DEFAULT_REMAINING_TIME = 10 * 1000;
+
+const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 
 let intervalId = null;
 let todayRemainingTime = DEFAULT_REMAINING_TIME;
@@ -37,6 +39,18 @@ function isYoutubeUrl(url) {
   return url.includes("youtube.com");
 }
 
+function openBlockedPage() {
+  for (const tabId of youtubeTabsSet) {
+    chrome.tabs.update(tabId, { url: BLOCKED_URL });
+  }
+}
+
+function blockUser() {
+  clearInterval(intervalId);
+  intervalId = null;
+  openBlockedPage();
+}
+
 function resetTracking() {
   console.log("Resetting tracking");
   todayRemainingTime = DEFAULT_REMAINING_TIME;
@@ -52,8 +66,7 @@ function startTracking() {
       todayRemainingTime -= 1000;
       console.log("🚀 ~ todayRemainingTime:", todayRemainingTime);
       if (todayRemainingTime <= 0) {
-        resetTracking();
-        console.log("Time's up! Blocking Youtube");
+        blockUser();
       }
     }, 1000);
   }
