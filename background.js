@@ -4,6 +4,35 @@ let intervalId = null;
 let todayRemainingTime = DEFAULT_REMAINING_TIME;
 const youtubeTabsSet = new Set();
 
+function getTodayString() {
+  const now = new Date();
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0
+  );
+  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+}
+
+function isNewDate() {
+  const now = new Date();
+  const date = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0
+  );
+  const currentDay = chrome.storage.local.get("currentDay");
+  return (
+    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` !== currentDay
+  );
+}
+
 function isYoutubeUrl(url) {
   return url.includes("youtube.com");
 }
@@ -17,6 +46,7 @@ function resetTracking() {
 
 function startTracking() {
   console.log("Starting tracking");
+
   if (!intervalId) {
     intervalId = setInterval(() => {
       todayRemainingTime -= 1000;
@@ -37,11 +67,33 @@ function stopTracking() {
   }
 }
 
+chrome.runtime.onStartup.addListener(() => {
+  if (isNewDate()) {
+    resetTracking();
+  }
+  chrome.storage.local.set({
+    currentDay: getTodayString(),
+  });
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.set({
+    currentDay: getTodayString(),
+  });
+});
+
 chrome.tabs.onActivated.addListener((activeInfo) => {
   if (youtubeTabsSet.has(activeInfo.tabId)) {
     startTracking();
   } else {
-    stopTracking();
+    chrome.tabs.get(activeInfo.tabId, (tab) => {
+      if (isYoutubeUrl(tab.url)) {
+        youtubeTabsSet.add(tab.id);
+        startTracking();
+      } else {
+        stopTracking();
+      }
+    });
   }
 });
 
