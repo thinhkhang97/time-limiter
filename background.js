@@ -106,8 +106,10 @@ chrome.runtime.onStartup.addListener(() => {
   });
   chrome.storage.local.get("dailyLimit", (result) => {
     dailyLimit = result.dailyLimit || DEFAULT_DAILY_LIMIT;
+    console.log("set up dailyLimit", dailyLimit);
     chrome.storage.local.get("todayRemainingTime", (result) => {
       todayRemainingTime = result.todayRemainingTime || dailyLimit;
+      console.log("set up todayRemainingTime", todayRemainingTime);
     });
   });
 });
@@ -115,11 +117,17 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.runtime.onInstalled.addListener(() => {
   console.log("onInstalled");
   resetTracking();
-  chrome.storage.local.set({
-    currentDay: getTodayString(),
-    dailyLimit: DEFAULT_DAILY_LIMIT,
-    todayRemainingTime: DEFAULT_DAILY_LIMIT,
-  });
+  chrome.storage.local.set(
+    {
+      currentDay: getTodayString(),
+      dailyLimit: DEFAULT_DAILY_LIMIT,
+      todayRemainingTime: DEFAULT_DAILY_LIMIT,
+    },
+    () => {
+      dailyLimit = DEFAULT_DAILY_LIMIT;
+      todayRemainingTime = DEFAULT_DAILY_LIMIT;
+    }
+  );
 });
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
