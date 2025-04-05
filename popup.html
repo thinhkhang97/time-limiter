@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Time Limiter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Dark Theme Palette */
+        --bg-color: #2d3748; /* Dark Slate */
+        --text-color: #e2e8f0; /* Light Slate */
+        --text-strong-color: #f7fafc; /* Very Light Slate */
+        --text-muted-color: #a0aec0; /* Medium Slate */
+        --border-color: #4a5568; /* Medium-Dark Slate */
+        --input-bg-color: #4a5568; /* Medium-Dark Slate */
+        --input-border-color: #718096; /* Medium Slate */
+        --accent-color: #4299e1; /* Blue */
+        --accent-hover-color: #3182ce; /* Darker Blue */
+        --accent-active-color: #2b6cb0; /* Even Darker Blue */
+        --success-color: #68d391; /* Green */
+        --success-pulse-color: #48bb78; /* Darker Green */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        padding: 15px; /* Slightly reduced padding for smaller popups */
+        min-width: 260px; /* Slightly reduced min-width */
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border-radius: 8px;
+      }
+
+      h3 {
+        margin-top: 0;
+        color: var(--text-strong-color);
+        text-align: center;
+        font-size: 1.3em; /* Slightly smaller heading */
+        font-weight: 700;
+        margin-bottom: 20px; /* Reduced bottom margin */
+      }
+
+      .setting {
+        margin-bottom: 20px; /* Reduced bottom margin */
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px; /* Reduced margin */
+        font-weight: 600;
+        color: var(--text-muted-color);
+        font-size: 0.95em; /* Slightly smaller label */
+      }
+
+      /* Flex container for input and button */
+      .input-button-row {
+        display: flex;
+        align-items: center; /* Vertically align items */
+        gap: 3%; /* Space between input and button */
+      }
+
+      input[type="number"] {
+        background-color: var(--input-bg-color);
+        color: var(--text-color);
+        padding: 8px 10px; /* Adjusted padding */
+        border: 1px solid var(--input-border-color);
+        border-radius: 6px;
+        font-size: 0.95em; /* Adjusted font size */
+        margin-bottom: 0;
+        width: 62%; /* Adjusted width */
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        /* Removed margin-right, gap handles spacing */
+      }
+
+      input[type="number"]:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+      }
+
+      /* Hide number input spinners */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      button {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 8px 10px; /* Reduced padding */
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9em; /* Reduced font size */
+        font-weight: 600;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        width: 35%; /* Adjusted width */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        /* Removed display and vertical-align, flex handles layout */
+        text-align: center; /* Ensure text is centered */
+        line-height: 1.4; /* Adjust line-height for vertical centering */
+        flex-shrink: 0; /* Prevent button from shrinking too much */
+      }
+
+      button:hover {
+        background-color: var(--accent-hover-color);
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        background-color: var(--accent-active-color);
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .status {
+        margin-top: 20px; /* Reduced margin */
+        font-size: 0.9em; /* Slightly smaller status text */
+        color: var(--text-muted-color);
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px; /* Reduced padding */
+      }
+
+      .status p {
+        margin: 6px 0; /* Reduced margin */
+      }
+
+      .status strong {
+        color: var(--text-strong-color);
+        font-weight: 600;
+      }
+
+      #save-status {
+        margin-top: 12px; /* Reduced margin */
+        font-weight: 600;
+        color: var(--success-color);
+        height: 1.2em;
+        text-align: center;
+        transition: color 0.3s ease;
+        font-size: 0.9em; /* Match status text size */
+      }
+
+      /* Updated pulse animation colors */
+      .saved-animation {
+        animation: pulse 1s ease;
+      }
+      @keyframes pulse {
+        0% {
+          color: var(--success-color);
+        }
+        50% {
+          color: var(--success-pulse-color);
+        }
+        100% {
+          color: var(--success-color);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h3>YouTube Time Limiter</h3>
+
+    <div class="setting">
+      <label for="limit-input">Daily Limit (minutes):</label>
+      <div class="input-button-row">
+        <input type="number" id="limit-input" min="1" placeholder="Minutes" />
+        <button id="save-button">Save</button>
+      </div>
+    </div>
+    <div id="save-status"></div>
+
+    <div class="status">
+      <p>Time left: <strong id="remaining-time">...</strong></p>
+      <p>Daily Limit: <strong id="current-limit">...</strong></p>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

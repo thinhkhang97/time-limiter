@@ -1,4 +1,4 @@
-const DEFAULT_REMAINING_TIME = 30 * 1000;
+const DEFAULT_DAILY_LIMIT = 30 * 1000;
 
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 let lastDate = getTodayString();
@@ -61,7 +61,7 @@ function blockUser() {
 
 function resetTracking() {
   console.log("Resetting tracking");
-  updateUserRemainingTime(DEFAULT_REMAINING_TIME);
+  updateUserRemainingTime(DEFAULT_DAILY_LIMIT);
   clearInterval(intervalId);
   intervalId = null;
 }
@@ -97,7 +97,7 @@ chrome.runtime.onStartup.addListener(() => {
     currentDay: getTodayString(),
   });
   chrome.storage.local.get("todayRemainingTime", (result) => {
-    todayRemainingTime = result.todayRemainingTime || DEFAULT_REMAINING_TIME;
+    todayRemainingTime = result.todayRemainingTime || DEFAULT_DAILY_LIMIT;
   });
 });
 
@@ -108,7 +108,7 @@ chrome.runtime.onInstalled.addListener(() => {
     currentDay: getTodayString(),
   });
   chrome.storage.local.get("todayRemainingTime", (result) => {
-    todayRemainingTime = result.todayRemainingTime || DEFAULT_REMAINING_TIME;
+    todayRemainingTime = result.todayRemainingTime || DEFAULT_DAILY_LIMIT;
   });
 });
 
