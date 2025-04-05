@@ -52,6 +52,7 @@ saveButton.addEventListener("click", () => {
     currentLimitDisplay.textContent = `${newLimit} min`; // Update display immediately
     saveStatusDisplay.textContent = "Limit Saved!";
     saveStatusDisplay.style.color = "green";
+    updateRemainingProgessBar(remainingTime, newLimit);
 
     // Clear the status message after a few seconds
     setTimeout(() => {

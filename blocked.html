@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Time for a Break!</title>
+    <title>Time for a Change</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,24 +12,24 @@
     />
 
     <style>
-      /* Define color variables (optional, but good practice) */
       :root {
-        --primary-color: #3498db; /* Blue */
-        --secondary-color: #2ecc71; /* Green */
-        --light-bg-color: #f8f9fa;
-        --dark-text-color: #343a40;
-        --gray-text-color: #4a5568;
-        --light-gray-text-color: #718096;
-        --border-color: #e2e8f0;
-        --white-color: #ffffff;
+        /* Dark Theme Palette */
+        --bg-dark-start: #2d3748; /* Dark Slate */
+        --bg-dark-end: #1a202c; /* Darker Slate */
+        --text-dark-primary: #e2e8f0; /* Light Slate (Default Text) */
+        --text-dark-secondary: #a0aec0; /* Medium Slate (Muted/Footer) */
+        --heading-dark-primary: #90cdf4; /* Light Blue */
+        --heading-dark-secondary: #9ae6b4; /* Light Green */
 
-        /* Suggestion box colors */
-        --blue-bg: #eff6ff;
-        --blue-text: #1e40af;
-        --green-bg: #f0fdf4;
-        --green-text: #166534;
-        --purple-bg: #faf5ff;
-        --purple-text: #5b21b6;
+        /* Suggestion Box Colors (Dark Theme) */
+        --box-bg-dark: #4a5568; /* Medium-Dark Slate */
+        --box-bg-dark-hover: #5a667a; /* Slightly Lighter Slate */
+        --box-text-dark-blue: var(--heading-dark-primary);
+        --box-text-dark-green: var(--heading-dark-secondary);
+        --box-text-dark-purple: #d6bcfa; /* Light Purple */
+
+        /* Fallback border color (if needed) */
+        --border-color-dark: #4a5568;
       }
 
       /* Basic Reset & Body Styling */
@@ -41,175 +41,167 @@
 
       body {
         font-family: "Inter", sans-serif;
-        color: var(--dark-text-color);
+        color: var(--text-dark-primary); /* Default light text */
+        /* --- Dark Theme Background Gradient --- */
         background: linear-gradient(
-          to bottom right,
-          rgba(52, 152, 219, 0.1),
-          var(--light-bg-color),
-          rgba(46, 204, 113, 0.1)
+          to bottom,
+          var(--bg-dark-start),
+          var(--bg-dark-end)
         );
+        background-attachment: fixed;
+        /* --- End Dark Theme Background Gradient --- */
+
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 1.5rem; /* p-6 */
+        padding: 1.5rem;
+        overflow-y: auto;
       }
 
-      /* Main Content Container */
-      .content-container {
-        background-color: var(--white-color);
-        padding: 2rem; /* p-8 */
-        border-radius: 0.75rem; /* rounded-xl */
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
-        max-width: 42rem; /* max-w-2xl */
+      /* Wrapper for main content */
+      .main-content-wrapper {
+        max-width: 45rem;
+        width: 95%;
         text-align: center;
-        transition: transform 0.3s ease-in-out;
-      }
-
-      .content-container:hover {
-        transform: scale(1.02);
+        padding: 2rem 0;
       }
 
       /* Headings and Text */
       .main-heading {
-        font-size: 1.875rem; /* text-3xl */
-        font-weight: 700; /* font-bold */
-        color: var(--primary-color);
-        margin-bottom: 1rem; /* mb-4 */
-        margin-top: 1rem; /* mt-4 */
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--heading-dark-primary); /* Light Blue Heading */
+        margin-bottom: 1.5rem;
+        margin-top: 1rem;
       }
 
       .info-text {
-        font-size: 1.125rem; /* text-lg */
-        color: var(--gray-text-color); /* text-gray-700 approximation */
-        margin-bottom: 2rem; /* mb-8 */
+        font-size: 1.15rem;
+        color: var(--text-dark-primary); /* Standard light text */
+        margin-bottom: 3rem;
+        line-height: 1.6;
+        max-width: 35rem;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .suggestions-heading {
-        font-size: 1.5rem; /* text-2xl */
-        font-weight: 600; /* font-semibold */
-        color: var(--secondary-color);
-        margin-bottom: 1.5rem; /* mb-6 */
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--heading-dark-secondary); /* Light Green Heading */
+        margin-bottom: 2rem;
       }
 
       .footer-text {
-        margin-top: 2.5rem; /* mt-10 */
-        font-size: 0.875rem; /* text-sm */
-        color: #a0aec0; /* text-gray-500 approximation */
+        margin-top: 4rem;
+        font-size: 0.9rem;
+        color: var(--text-dark-secondary); /* Muted light text */
       }
 
       /* Suggestions Section */
       .suggestions-section {
-        border-top: 1px solid var(--border-color); /* border-t border-gray-200 */
-        padding-top: 2rem; /* pt-8 */
+        padding-top: 2rem;
+        margin-top: 3rem;
+        /* No border */
       }
 
       .suggestions-grid {
         display: grid;
-        grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
-        gap: 1.5rem; /* gap-6 */
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 1.5rem;
       }
 
       .suggestion-box {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1rem; /* p-4 */
-        border-radius: 0.5rem; /* rounded-lg */
-        transition: box-shadow 0.2s ease-in-out;
+        justify-content: center;
+        padding: 1.75rem 1rem;
+        border-radius: 0.75rem;
+        transition: background-color 0.2s ease-in-out;
+        min-height: 90px;
+        background-color: var(--box-bg-dark); /* Dark background for boxes */
+        /* Removed border */
       }
 
       .suggestion-box:hover {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
+        background-color: var(
+          --box-bg-dark-hover
+        ); /* Slightly lighter on hover */
       }
 
       .suggestion-box h3 {
-        font-weight: 600; /* font-semibold */
-        margin-bottom: 0.25rem; /* mb-1 */
-        padding-top: 0.75rem; /* pt-3 */
+        font-weight: 600;
+        font-size: 1.05rem;
+        /* Color set in specific rules below */
       }
 
-      .suggestion-box p {
-        font-size: 0.875rem; /* text-sm */
-        color: var(--light-gray-text-color); /* text-gray-600 approximation */
-      }
-
-      /* Specific Suggestion Box Styles */
-      .suggestion-box.blue {
-        background-color: var(--blue-bg);
-      }
+      /* Specific Suggestion Box Text Colors (Dark Theme) */
       .suggestion-box.blue h3 {
-        color: var(--blue-text);
-      }
-
-      .suggestion-box.green {
-        background-color: var(--green-bg);
+        color: var(--box-text-dark-blue);
       }
       .suggestion-box.green h3 {
-        color: var(--green-text);
-      }
-
-      .suggestion-box.purple {
-        background-color: var(--purple-bg);
+        color: var(--box-text-dark-green);
       }
       .suggestion-box.purple h3 {
-        color: var(--purple-text);
+        color: var(--box-text-dark-purple);
       }
 
       /* Responsive Design - Media Queries */
-      /* Small screens and up (sm: 640px) */
       @media (min-width: 640px) {
         .suggestions-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr)); /* sm:grid-cols-3 */
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .main-heading {
+          font-size: 2.25rem;
+        }
+        .info-text {
+          font-size: 1.2rem;
         }
       }
 
-      /* Medium screens and up (md: 768px) */
       @media (min-width: 768px) {
-        .content-container {
-          padding: 3rem; /* md:p-12 */
+        .main-content-wrapper {
+          padding: 3rem 0;
         }
         .main-heading {
-          font-size: 2.25rem; /* md:text-4xl */
+          font-size: 2.5rem;
+        }
+        .suggestions-heading {
+          font-size: 1.6rem;
         }
       }
     </style>
   </head>
   <body>
-    <div class="content-container">
-      <h1 class="main-heading">Time for a Digital Detox!</h1>
+    <div class="main-content-wrapper">
+      <h1 class="main-heading">Time for a Change of Scene</h1>
 
       <p class="info-text">
-        Looks like you've spent a bit too much time scrolling today. This site
-        is temporarily blocked to help you take a healthy break.
+        You've reached your time limit here. How about trying a different
+        activity?
       </p>
 
       <div class="suggestions-section">
-        <h2 class="suggestions-heading">Why not try...</h2>
+        <h2 class="suggestions-heading">Boost Your Break With:</h2>
         <div class="suggestions-grid">
           <div class="suggestion-box blue">
-            <h3>Stretch It Out</h3>
-            <p>Stand up, walk around, and give your body a good stretch.</p>
+            <h3>Move Your Body</h3>
           </div>
 
           <div class="suggestion-box green">
-            <h3>Get Some Fresh Air</h3>
-            <p>Step outside, enjoy the sunlight, or take a short walk.</p>
+            <h3>Enjoy Fresh Air</h3>
           </div>
 
           <div class="suggestion-box purple">
-            <h3>Learn Something</h3>
-            <p>Read a book, listen to a podcast, or learn a new skill.</p>
+            <h3>Learn Something New</h3>
           </div>
         </div>
       </div>
 
-      <p class="footer-text">
-        Your focus and well-being matter. You'll be able to access this site
-        again later.
-      </p>
+      <p class="footer-text">Focus refreshed? You can return later.</p>
     </div>
   </body>
 </html>
