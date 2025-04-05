@@ -1,9 +1,10 @@
-const DEFAULT_REMAINING_TIME = 10 * 1000;
+const DEFAULT_REMAINING_TIME = 30 * 1000;
 
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
+let lastDate = getTodayString();
 
 let intervalId = null;
-let todayRemainingTime = DEFAULT_REMAINING_TIME;
+let todayRemainingTime;
 const youtubeTabsSet = new Set();
 
 function getTodayString() {
@@ -20,6 +21,7 @@ function getTodayString() {
 }
 
 function isNewDate() {
+  console.log("Checking if new date with", lastDate);
   const now = new Date();
   const date = new Date(
     now.getFullYear(),
@@ -29,14 +31,20 @@ function isNewDate() {
     0,
     0
   );
-  const currentDay = chrome.storage.local.get("currentDay");
   return (
-    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` !== currentDay
+    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` !== lastDate
   );
 }
 
 function isYoutubeUrl(url) {
   return url.includes("youtube.com");
+}
+
+function updateUserRemainingTime(remainingTime) {
+  todayRemainingTime = remainingTime;
+  chrome.storage.local.set({
+    todayRemainingTime: remainingTime,
+  });
 }
 
 function openBlockedPage() {
@@ -53,7 +61,7 @@ function blockUser() {
 
 function resetTracking() {
   console.log("Resetting tracking");
-  todayRemainingTime = DEFAULT_REMAINING_TIME;
+  updateUserRemainingTime(DEFAULT_REMAINING_TIME);
   clearInterval(intervalId);
   intervalId = null;
 }
@@ -63,7 +71,7 @@ function startTracking() {
 
   if (!intervalId) {
     intervalId = setInterval(() => {
-      todayRemainingTime -= 1000;
+      updateUserRemainingTime(todayRemainingTime - 1000);
       console.log("🚀 ~ todayRemainingTime:", todayRemainingTime);
       if (todayRemainingTime <= 0) {
         blockUser();
@@ -81,21 +89,33 @@ function stopTracking() {
 }
 
 chrome.runtime.onStartup.addListener(() => {
-  if (isNewDate()) {
-    resetTracking();
-  }
+  console.log("onStartup");
+  chrome.storage.local.get("currentDay", (result) => {
+    lastDate = result.currentDay || getTodayString();
+  });
   chrome.storage.local.set({
     currentDay: getTodayString(),
+  });
+  chrome.storage.local.get("todayRemainingTime", (result) => {
+    todayRemainingTime = result.todayRemainingTime || DEFAULT_REMAINING_TIME;
   });
 });
 
 chrome.runtime.onInstalled.addListener(() => {
+  console.log("onInstalled");
+  resetTracking();
   chrome.storage.local.set({
     currentDay: getTodayString(),
+  });
+  chrome.storage.local.get("todayRemainingTime", (result) => {
+    todayRemainingTime = result.todayRemainingTime || DEFAULT_REMAINING_TIME;
   });
 });
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
+  if (isNewDate()) {
+    resetTracking();
+  }
   if (youtubeTabsSet.has(activeInfo.tabId)) {
     startTracking();
   } else {
