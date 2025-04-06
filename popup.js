@@ -7,6 +7,7 @@ const currentLimitDisplay = document.getElementById("current-limit");
 const saveStatusDisplay = document.getElementById("save-status");
 const progressBar = document.getElementById("time-progress-bar");
 
+const MAX_DAILY_LIMIT = 90;
 let dailyLimit = 60;
 let spentTime = 0;
 // Format seconds into minutes and seconds string
@@ -46,8 +47,8 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
-  if (newLimit > 120) {
-    saveStatusDisplay.textContent = "Limit cannot be greater than 120 minutes!";
+  if (newLimit > MAX_DAILY_LIMIT) {
+    saveStatusDisplay.textContent = `Limit cannot be greater than ${MAX_DAILY_LIMIT} minutes!`;
     saveStatusDisplay.style.color = "red";
     return;
   }

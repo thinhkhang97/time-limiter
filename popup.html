@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Time limiter</title>
+    <title>TimeWise Limiter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,19 +14,17 @@
     <style>
       :root {
         /* Dark Theme Palette */
-        --bg-color: #2d3748; /* Dark Slate */
-        --bg-gradient-end: #1a202c; /* Darker Slate for gradient */
-        --text-color: #e2e8f0; /* Light Slate */
-        --text-strong-color: #f7fafc; /* Very Light Slate */
-        --text-muted-color: #a0aec0; /* Medium Slate */
+        --bg-dark-start: #2d3748; /* Dark Slate */
+        --bg-dark-end: #1a202c; /* Darker Slate */
+        --text-dark-primary: #e2e8f0; /* Light Slate (Default Text) */
+        --text-dark-secondary: #a0aec0; /* Medium Slate (Muted/Footer) */
+        --text-muted-color: var(--text-dark-secondary); /* Alias for clarity */
         --border-color: #4a5568; /* Medium-Dark Slate */
         --input-bg-color: #4a5568; /* Medium-Dark Slate */
         --input-border-color: #718096; /* Medium Slate */
-        /* --accent-color: #4299e1; /* Blue - No longer primary for button */
-        /* --accent-hover-color: #3182ce; /* Darker Blue - No longer primary for button hover */
-        /* --accent-active-color: #2b6cb0; /* Even Darker Blue - No longer primary for button active */
         --success-color: #68d391; /* Green */
         --success-pulse-color: #48bb78; /* Darker Green */
+        --error-color: #e53e3e; /* Red for errors */
 
         /* Progress Bar & Button Gradient Colors */
         --progress-track-color: #1a202c; /* Darker background for track */
@@ -38,9 +36,6 @@
         --fill-hover-end: #2c9a94; /* Darker Cyan/Teal */
         --fill-active-start: #2b6cb0; /* Even Darker Blue */
         --fill-active-end: #26817d; /* Even Darker Cyan/Teal */
-
-        /* Fallback error color (if needed by JS) */
-        --error-color: #e53e3e;
       }
 
       body {
@@ -49,17 +44,17 @@
         min-width: 260px;
         background: linear-gradient(
           to bottom,
-          var(--bg-color),
-          var(--bg-gradient-end)
+          var(--bg-dark-start),
+          var(--bg-dark-end)
         );
-        color: var(--text-color);
+        color: var(--text-dark-primary);
         border-radius: 8px;
         min-height: 150px;
       }
 
       h3 {
         margin-top: 0;
-        color: var(--text-strong-color);
+        color: var(--text-dark-primary); /* Use primary text color */
         text-align: center;
         font-size: 1.3em;
         font-weight: 700;
@@ -67,7 +62,7 @@
       }
 
       .setting {
-        margin-bottom: 20px;
+        margin-bottom: 15px; /* Reduced margin */
       }
 
       label {
@@ -82,11 +77,21 @@
         display: flex;
         align-items: center;
         gap: 3%;
+        margin-bottom: 5px; /* Add space before the note */
+      }
+
+      /* Style for the new note */
+      .limit-note {
+        font-size: 0.8em;
+        color: var(--text-muted-color);
+        text-align: left;
+        padding-left: 2px; /* Align slightly with input */
+        margin-top: 5px;
       }
 
       input[type="number"] {
         background-color: var(--input-bg-color);
-        color: var(--text-color);
+        color: var(--text-dark-primary);
         padding: 8px 10px;
         border: 1px solid var(--input-border-color);
         border-radius: 6px;
@@ -99,10 +104,8 @@
 
       input[type="number"]:focus {
         outline: none;
-        border-color: var(
-          --fill-start
-        ); /* Use gradient start color for focus */
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3); /* Keep blue shadow for consistency */
+        border-color: var(--fill-start);
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
       }
 
       input::-webkit-outer-spin-button,
@@ -116,7 +119,6 @@
       }
 
       button {
-        /* Apply gradient background */
         background: linear-gradient(
           to right,
           var(--fill-start, #4299e1),
@@ -129,7 +131,6 @@
         cursor: pointer;
         font-size: 0.9em;
         font-weight: 600;
-        /* Transition background (might not be smooth for gradients) and transform */
         transition: background 0.2s ease, transform 0.1s ease, filter 0.2s ease;
         width: 35%;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -139,19 +140,15 @@
       }
 
       button:hover {
-        /* Apply darker gradient on hover */
         background: linear-gradient(
           to right,
           var(--fill-hover-start, #3182ce),
           var(--fill-hover-end, #2c9a94)
         );
         transform: translateY(-1px);
-        /* Optional: Add brightness filter as another way to darken */
-        /* filter: brightness(90%); */
       }
 
       button:active {
-        /* Apply even darker gradient on active */
         background: linear-gradient(
           to right,
           var(--fill-active-start, #2b6cb0),
@@ -159,8 +156,6 @@
         );
         transform: translateY(0);
         box-shadow: none;
-        /* Optional: Add brightness filter */
-        /* filter: brightness(80%); */
       }
 
       /* --- Progress Bar Styles --- */
@@ -169,7 +164,7 @@
         height: 8px;
         background-color: var(--progress-track-color);
         border-radius: 4px;
-        margin-bottom: 15px;
+        margin-bottom: 10px; /* Reduced space before status row */
         overflow: hidden;
       }
 
@@ -187,24 +182,33 @@
       }
       /* --- End Progress Bar Styles --- */
 
+      /* Updated Status Section Layout */
       .status {
+        display: flex; /* Arrange items in a row */
+        justify-content: space-between; /* Space out items */
+        align-items: center; /* Align items vertically */
+        flex-wrap: wrap; /* Allow wrapping on very small screens */
+        gap: 10px; /* Add gap between items if they wrap */
         font-size: 0.9em;
         color: var(--text-muted-color);
         border-top: 1px solid var(--border-color);
-        padding-top: 12px;
+        padding-top: 10px; /* Reduced padding */
+        margin-top: 15px; /* Add margin above status row */
       }
 
       .status p {
-        margin: 6px 0;
+        margin: 0; /* Remove default paragraph margin */
+        /* Optionally set a min-width if needed */
+        /* min-width: 100px; */
       }
 
       .status strong {
-        color: var(--text-strong-color);
+        color: var(--text-dark-primary); /* Brighter color for values */
         font-weight: 600;
       }
 
       #save-status {
-        margin-top: 12px;
+        margin-top: 15px; /* Adjusted margin */
         font-weight: 600;
         color: var(--success-color);
         height: 1.2em;
@@ -230,14 +234,15 @@
     </style>
   </head>
   <body>
-    <h3>Time limiter</h3>
+    <h3>TimeWise Limiter</h3>
 
     <div class="setting">
-      <label for="limit-input">Daily limit (minutes):</label>
+      <label for="limit-input">Daily Limit (minutes):</label>
       <div class="input-button-row">
         <input type="number" id="limit-input" min="1" placeholder="Minutes" />
         <button id="save-button">Save</button>
       </div>
+      <p class="limit-note">Note: Max limit is 90 minutes.</p>
     </div>
     <div id="save-status"></div>
 
@@ -247,7 +252,7 @@
 
     <div class="status">
       <p>Time left: <strong id="remaining-time">...</strong></p>
-      <p>Daily limit: <strong id="current-limit">...</strong></p>
+      <p>Daily Limit: <strong id="current-limit">...</strong></p>
     </div>
 
     <script src="popup.js"></script>
