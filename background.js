@@ -5,7 +5,7 @@ const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
   todayRemainingTime: DEFAULT_DAILY_LIMIT,
   socialMediaTabsSet: new Set(),
-  lastDate: getTodayString(),
+  currentDay: getTodayString(),
   intervalId: null,
 };
 
@@ -18,7 +18,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-async function loadState() {
+async function initialize() {
   console.log("loading state");
 
   const dailyLimitResult = await chrome.storage.local.get("dailyLimit");
@@ -31,20 +31,17 @@ async function loadState() {
     todayRemainingTimeResult.todayRemainingTime || state.dailyLimit;
 
   const currentDayResult = await chrome.storage.local.get("currentDay");
-  state.lastDate = currentDayResult.currentDay || getTodayString();
+  const today = getTodayString();
+  state.currentDay = currentDayResult.currentDay || today;
+  await chrome.storage.local.set({
+    currentDay: today,
+  });
 
   console.log("loaded state", state);
 }
 
-async function initialize() {
-  await chrome.storage.local.set({
-    currentDay: getTodayString(),
-  });
-}
-
 async function start() {
   await initialize();
-  await loadState();
 
   chrome.runtime.onStartup.addListener(() => {
     console.log("onStartup");
@@ -52,8 +49,11 @@ async function start() {
 
   chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log("onActivated", activeInfo);
-    if (isNewDate()) {
+    if (state.currentDay !== getTodayString()) {
       resetTracking();
+      chrome.storage.local.set({
+        currentDay: getTodayString(),
+      });
     }
     if (state.socialMediaTabsSet.has(activeInfo.tabId)) {
       startTracking();
@@ -105,29 +105,12 @@ function getTodayString() {
   const today = new Date(
     now.getFullYear(),
     now.getMonth(),
-    now.getDate(),
-    0,
-    0,
-    0
+    now.getDate()
+    // 0,
+    // 0,
+    // 0
   );
-  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
-}
-
-function isNewDate() {
-  console.log("Checking if new date with", state.lastDate);
-  const now = new Date();
-  const date = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    0,
-    0,
-    0
-  );
-  return (
-    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` !==
-    state.lastDate
-  );
+  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}-${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}`;
 }
 
 function isSocialMediaUrl(url) {
