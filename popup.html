@@ -49,12 +49,20 @@
         );
         color: var(--text-dark-primary);
         border-radius: 8px;
-        min-height: 150px;
+        min-height: 150px; /* Adjust min-height if needed */
+        display: flex; /* Use flexbox for vertical centering if content is short */
+        flex-direction: column; /* Stack content vertically */
+      }
+
+      /* Wrapper to allow flex centering */
+      .popup-content {
+        width: 100%;
+        margin: auto 0; /* Vertical centering */
       }
 
       h3 {
         margin-top: 0;
-        color: var(--text-dark-primary); /* Use primary text color */
+        color: var(--text-dark-primary);
         text-align: center;
         font-size: 1.3em;
         font-weight: 700;
@@ -62,7 +70,7 @@
       }
 
       .setting {
-        margin-bottom: 15px; /* Reduced margin */
+        margin-bottom: 15px;
       }
 
       label {
@@ -77,15 +85,14 @@
         display: flex;
         align-items: center;
         gap: 3%;
-        margin-bottom: 5px; /* Add space before the note */
+        margin-bottom: 5px;
       }
 
-      /* Style for the new note */
       .limit-note {
         font-size: 0.8em;
         color: var(--text-muted-color);
         text-align: left;
-        padding-left: 2px; /* Align slightly with input */
+        padding-left: 2px;
         margin-top: 5px;
       }
 
@@ -164,13 +171,12 @@
         height: 8px;
         background-color: var(--progress-track-color);
         border-radius: 4px;
-        margin-bottom: 10px; /* Reduced space before status row */
+        margin-bottom: 10px;
         overflow: hidden;
       }
 
       .progress-bar {
         height: 100%;
-        /* Width set by JS */
         width: 0%; /* Default to 0% width */
         background: linear-gradient(
           to right,
@@ -184,31 +190,29 @@
 
       /* Updated Status Section Layout */
       .status {
-        display: flex; /* Arrange items in a row */
-        justify-content: space-between; /* Space out items */
-        align-items: center; /* Align items vertically */
-        flex-wrap: wrap; /* Allow wrapping on very small screens */
-        gap: 10px; /* Add gap between items if they wrap */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
         font-size: 0.9em;
         color: var(--text-muted-color);
         border-top: 1px solid var(--border-color);
-        padding-top: 10px; /* Reduced padding */
-        margin-top: 15px; /* Add margin above status row */
+        padding-top: 10px;
+        margin-top: 15px;
       }
 
       .status p {
-        margin: 0; /* Remove default paragraph margin */
-        /* Optionally set a min-width if needed */
-        /* min-width: 100px; */
+        margin: 0;
       }
 
       .status strong {
-        color: var(--text-dark-primary); /* Brighter color for values */
+        color: var(--text-dark-primary);
         font-weight: 600;
       }
 
       #save-status {
-        margin-top: 15px; /* Adjusted margin */
+        margin-top: 15px;
         font-weight: 600;
         color: var(--success-color);
         height: 1.2em;
@@ -216,6 +220,23 @@
         transition: color 0.3s ease;
         font-size: 0.9em;
       }
+
+      /* --- About Link Styles --- */
+      .about-link {
+        display: block; /* Ensure it takes its own line */
+        text-align: center;
+        margin-top: 20px; /* Space above the link */
+        font-size: 0.85em;
+        color: var(--text-muted-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .about-link:hover {
+        color: var(--text-dark-primary); /* Slightly brighten on hover */
+        text-decoration: underline;
+      }
+      /* --- End About Link Styles --- */
 
       .saved-animation {
         animation: pulse 1s ease;
@@ -234,27 +255,32 @@
     </style>
   </head>
   <body>
-    <h3>Time Limiter</h3>
+    <div class="popup-content">
+      <h3>Time Limiter</h3>
 
-    <div class="setting">
-      <label for="limit-input">Daily Limit (minutes):</label>
-      <div class="input-button-row">
-        <input type="number" id="limit-input" min="1" placeholder="Minutes" />
-        <button id="save-button">Save</button>
+      <div class="setting">
+        <label for="limit-input">Daily Limit (minutes):</label>
+        <div class="input-button-row">
+          <input type="number" id="limit-input" min="1" placeholder="Minutes" />
+          <button id="save-button">Save</button>
+        </div>
+        <p class="limit-note">Note: Max limit is 90 minutes.</p>
       </div>
-      <p class="limit-note">Note: Max limit is 90 minutes.</p>
-    </div>
-    <div id="save-status"></div>
+      <div id="save-status"></div>
 
-    <div class="progress-container">
-      <div class="progress-bar" id="time-progress-bar"></div>
-    </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="time-progress-bar"></div>
+      </div>
 
-    <div class="status">
-      <p>Time left: <strong id="remaining-time">...</strong></p>
-      <p>Daily Limit: <strong id="current-limit">...</strong></p>
-    </div>
+      <div class="status">
+        <p>Time left: <strong id="remaining-time">...</strong></p>
+        <p>Daily Limit: <strong id="current-limit">...</strong></p>
+      </div>
 
+      <a href="about.html" target="_blank" class="about-link"
+        >About Time Limiter</a
+      >
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>

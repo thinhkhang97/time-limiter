@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Time Limiter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Dark Theme Palette */
+        --bg-dark-start: #2d3748; /* Dark Slate */
+        --bg-dark-end: #1a202c; /* Darker Slate */
+        --text-dark-primary: #e2e8f0; /* Light Slate (Default Text) */
+        --text-dark-secondary: #a0aec0; /* Medium Slate (Muted/Footer) */
+        --heading-dark-primary: #90cdf4; /* Light Blue */
+        --heading-dark-secondary: #9ae6b4; /* Light Green */
+        --accent-purple: #d6bcfa; /* Light Purple */
+
+        /* Box/Element Colors (Dark Theme) */
+        --box-bg-dark: #4a5568; /* Medium-Dark Slate */
+        --box-bg-dark-hover: #5a667a; /* Slightly Lighter Slate */
+
+        /* Border Color */
+        --border-color-dark: #4a5568;
+      }
+
+      /* Basic Reset & Body Styling */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--text-dark-primary); /* Default light text */
+        background: linear-gradient(
+          to bottom,
+          var(--bg-dark-start),
+          var(--bg-dark-end)
+        );
+        background-attachment: fixed;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1.5rem; /* Increased top/bottom padding */
+        overflow-y: auto;
+      }
+
+      /* Wrapper for main content */
+      .main-content-wrapper {
+        max-width: 50rem; /* Slightly wider */
+        width: 100%;
+        text-align: center; /* Center align content */
+        padding: 2rem 0;
+        margin: auto 0; /* Center vertically */
+      }
+
+      /* Hero Section Styles */
+      .hero-section h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--heading-dark-primary);
+        margin-bottom: 1rem;
+        line-height: 1.3;
+      }
+
+      .hero-section p.subtitle {
+        font-size: 1.15rem;
+        color: var(--text-dark-secondary);
+        margin-bottom: 3rem;
+        max-width: 40rem; /* Constrain subtitle width */
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.7;
+      }
+
+      /* Features Section Styles */
+      .features-section {
+        margin-top: 3rem;
+      }
+
+      .features-section h2 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: var(--heading-dark-secondary);
+        margin-bottom: 2.5rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* Start with 1 column */
+        gap: 1.5rem;
+        text-align: left; /* Align text left inside feature items */
+      }
+
+      .feature-item {
+        background-color: var(--box-bg-dark);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        flex-direction: column; /* Stack icon, title, description */
+        align-items: center; /* Center content horizontally */
+        text-align: center; /* Center text */
+      }
+
+      .feature-icon {
+        font-size: 2.5rem; /* Larger icons */
+        margin-bottom: 1rem;
+        line-height: 1;
+      }
+
+      .feature-item h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-dark-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .feature-item p {
+        font-size: 0.95rem;
+        color: var(--text-dark-secondary);
+        line-height: 1.6;
+      }
+
+      /* Tracked Sites Info */
+      .tracked-sites-info {
+        margin-top: 3rem;
+        font-size: 0.9rem;
+        color: var(--text-dark-secondary);
+      }
+      .tracked-sites-info code {
+        background-color: var(--box-bg-dark);
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+
+      /* Footer text style */
+      .footer-text {
+        margin-top: 4rem;
+        font-size: 0.9rem;
+        color: var(--text-dark-secondary);
+        text-align: center;
+      }
+
+      /* Responsive Design - Media Queries */
+      @media (min-width: 640px) {
+        .hero-section h1 {
+          font-size: 2.5rem;
+        }
+        .hero-section p.subtitle {
+          font-size: 1.2rem;
+        }
+        .features-section h2 {
+          font-size: 1.8rem;
+        }
+        /* Display features in 2 columns on medium screens */
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 2rem;
+        }
+      }
+
+      @media (min-width: 900px) {
+        /* Display features in 4 columns on larger screens */
+        .features-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .hero-section h1 {
+          font-size: 2.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-content-wrapper">
+      <section class="hero-section">
+        <h1>Reclaim Your Time, Mindfully</h1>
+        <p class="subtitle">
+          Time Limiter helps you build healthier digital habits by gently
+          managing time spent on distracting sites, encouraging breaks, and
+          promoting balance.
+        </p>
+      </section>
+
+      <section class="features-section">
+        <h2>Key Features</h2>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon">⏱️</div>
+            <h3>Time Tracking</h3>
+            <p>
+              Automatically monitors active time on popular social media and
+              entertainment sites.
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎯</div>
+            <h3>Custom Limits</h3>
+            <p>
+              Set your own daily usage limit (up to 90 mins) to stay in control.
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🧘</div>
+            <h3>Gentle Nudges</h3>
+            <p>
+              Receive friendly reminders to stand up after 30 mins and blocking
+              when the limit is reached.
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌅</div>
+            <h3>Daily Reset</h3>
+            <p>
+              Your timer resets every day, offering a fresh start for mindful
+              usage.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="tracked-sites-info">
+        <p>
+          Currently tracking: <code>youtube.com</code>,
+          <code>instagram.com</code>, <code>netflix.com</code>,
+          <code>tiktok.com</code>, <code>facebook.com</code>,
+          <code>reddit.com</code>
+        </p>
+      </div>
+
+      <p class="footer-text">Find your focus with Time Limiter.</p>
+    </div>
+  </body>
+</html>
