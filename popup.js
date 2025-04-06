@@ -8,7 +8,7 @@ const saveStatusDisplay = document.getElementById("save-status");
 const progressBar = document.getElementById("time-progress-bar");
 
 let dailyLimit = 60;
-
+let todayRemainingTime = 0;
 // Format seconds into minutes and seconds string
 function formatTime(totalSeconds) {
   if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
@@ -21,14 +21,13 @@ function formatTime(totalSeconds) {
 // Load current settings when the popup opens
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(["dailyLimit", "todayRemainingTime"], (result) => {
-    const limit = result.dailyLimit || 60; // Default to 60 if not set
-    dailyLimit = limit;
-    const remainingTime = result.todayRemainingTime || 0; // Default to 0
-    updateRemainingProgessBar(remainingTime, dailyLimit);
+    dailyLimit = result.dailyLimit || 60;
+    todayRemainingTime = result.todayRemainingTime || 0;
+    updateRemainingProgessBar(todayRemainingTime, dailyLimit);
 
-    limitInput.value = limit / 60; // Set input field to current limit
-    currentLimitDisplay.textContent = `${formatTime(limit)}`;
-    remainingTimeDisplay.textContent = formatTime(remainingTime);
+    limitInput.value = dailyLimit / 60;
+    currentLimitDisplay.textContent = formatTime(dailyLimit);
+    remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
 
     console.log("Popup loaded:", result);
   });
@@ -49,6 +48,14 @@ saveButton.addEventListener("click", () => {
 
   if (newLimit > 120) {
     saveStatusDisplay.textContent = "Limit cannot be greater than 120 minutes!";
+    saveStatusDisplay.style.color = "red";
+    return;
+  }
+
+  if (newLimit < (dailyLimit - todayRemainingTime) / 60) {
+    saveStatusDisplay.textContent = `You're already spent ${formatTime(
+      dailyLimit - todayRemainingTime
+    )} of your limit!`;
     saveStatusDisplay.style.color = "red";
     return;
   }
