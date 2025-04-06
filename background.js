@@ -3,7 +3,7 @@ const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
 
 const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
-  todayRemainingTime: DEFAULT_DAILY_LIMIT,
+  spentTime: 0,
   socialMediaTabsSet: new Set(),
   currentDay: getTodayString(),
   intervalId: null,
@@ -14,7 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     currentDay: getTodayString(),
     dailyLimit: DEFAULT_DAILY_LIMIT,
-    todayRemainingTime: DEFAULT_DAILY_LIMIT,
+    spentTime: 0,
   });
 });
 
@@ -24,11 +24,8 @@ async function initialize() {
   const dailyLimitResult = await chrome.storage.local.get("dailyLimit");
   state.dailyLimit = dailyLimitResult.dailyLimit || DEFAULT_DAILY_LIMIT;
 
-  const todayRemainingTimeResult = await chrome.storage.local.get(
-    "todayRemainingTime"
-  );
-  state.todayRemainingTime =
-    todayRemainingTimeResult.todayRemainingTime || state.dailyLimit;
+  const spentTimeResult = await chrome.storage.local.get("spentTime");
+  state.spentTime = spentTimeResult.spentTime || 0;
 
   const currentDayResult = await chrome.storage.local.get("currentDay");
   const today = getTodayString();
@@ -85,13 +82,13 @@ async function start() {
     console.log("onChanged", changes, namespace);
     if (namespace === "local") {
       if (changes.dailyLimit) {
-        const spentTime =
-          changes.dailyLimit.oldValue - state.todayRemainingTime;
-        let newRemainingTime = changes.dailyLimit.newValue - spentTime;
-        if (newRemainingTime < 0) {
-          newRemainingTime = 0;
-        }
-        updateUserRemainingTime(newRemainingTime);
+        // const spentTime = changes.dailyLimit.oldValue - state.spentTime;
+        // let newRemainingTime = changes.dailyLimit.newValue - spentTime;
+        // if (newRemainingTime < 0) {
+        //   newRemainingTime = 0;
+        // }
+        // updateUserRemainingTime(newRemainingTime);
+        state.dailyLimit = changes.dailyLimit.newValue;
       }
     }
   });
@@ -113,10 +110,10 @@ function isSocialMediaUrl(url) {
   );
 }
 
-function updateUserRemainingTime(remainingTime = state.dailyLimit) {
-  state.todayRemainingTime = remainingTime;
+function updateUserSpentTime(spentTime = 0) {
+  state.spentTime = spentTime;
   chrome.storage.local.set({
-    todayRemainingTime: remainingTime,
+    spentTime: spentTime,
   });
 }
 
@@ -134,10 +131,10 @@ function blockUser() {
 
 function resetTracking() {
   console.log("Resetting tracking");
-  updateUserRemainingTime(state.dailyLimit);
+  updateUserSpentTime(state.dailyLimit);
   clearInterval(state.intervalId);
   state.intervalId = null;
-  state.todayRemainingTime = state.dailyLimit;
+  state.spentTime = state.dailyLimit;
 }
 
 function startTracking() {
@@ -145,8 +142,8 @@ function startTracking() {
 
   if (!state.intervalId) {
     state.intervalId = setInterval(() => {
-      updateUserRemainingTime(state.todayRemainingTime - 1);
-      if (state.todayRemainingTime <= 0) {
+      updateUserSpentTime(state.spentTime + 1);
+      if (state.spentTime >= state.dailyLimit) {
         blockUser();
       }
     }, 1000);

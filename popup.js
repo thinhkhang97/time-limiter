@@ -8,7 +8,7 @@ const saveStatusDisplay = document.getElementById("save-status");
 const progressBar = document.getElementById("time-progress-bar");
 
 let dailyLimit = 60;
-let todayRemainingTime = 0;
+let spentTime = 0;
 // Format seconds into minutes and seconds string
 function formatTime(totalSeconds) {
   if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
@@ -20,14 +20,14 @@ function formatTime(totalSeconds) {
 
 // Load current settings when the popup opens
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.local.get(["dailyLimit", "todayRemainingTime"], (result) => {
+  chrome.storage.local.get(["dailyLimit", "spentTime"], (result) => {
     dailyLimit = result.dailyLimit || 60;
-    todayRemainingTime = result.todayRemainingTime || 0;
-    updateRemainingProgessBar(todayRemainingTime, dailyLimit);
+    spentTime = result.spentTime || 0;
+    updateRemainingProgessBar(spentTime, dailyLimit);
 
     limitInput.value = dailyLimit / 60;
     currentLimitDisplay.textContent = formatTime(dailyLimit);
-    remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
+    remainingTimeDisplay.textContent = formatTime(dailyLimit - spentTime);
 
     console.log("Popup loaded:", result);
   });
@@ -52,9 +52,9 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
-  if (newLimit < (dailyLimit - todayRemainingTime) / 60) {
+  if (newLimit < spentTime / 60) {
     saveStatusDisplay.textContent = `You're already spent ${formatTime(
-      dailyLimit - todayRemainingTime
+      spentTime
     )} of your limit!`;
     saveStatusDisplay.style.color = "red";
     return;
@@ -73,27 +73,26 @@ saveButton.addEventListener("click", () => {
   });
 });
 
-function updateRemainingProgessBar(remainingTime, dailyLimit = 60) {
-  let percentage = (remainingTime / dailyLimit) * 100;
+function updateRemainingProgessBar(spentTime, dailyLimit = 60) {
+  let percentage = ((dailyLimit - spentTime) / dailyLimit) * 100;
   percentage = Math.max(0, Math.min(percentage, 100));
   progressBar.style.width = `${percentage}%`;
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === "local") {
-    // Check if 'timeSpentToday' was one of the changed items
-    if (changes.todayRemainingTime) {
-      const todayRemainingTime = changes.todayRemainingTime.newValue || 0;
-      // Update the display in the popup immediately
-      remainingTimeDisplay.textContent = formatTime(todayRemainingTime);
-      updateRemainingProgessBar(todayRemainingTime, dailyLimit);
+    if (changes.spentTime) {
+      const spentTime = changes.spentTime.newValue || 0;
+      remainingTimeDisplay.textContent = formatTime(dailyLimit - spentTime);
+      updateRemainingProgessBar(spentTime, dailyLimit);
     }
-    // You could also listen for changes to dailyLimit if needed,
-    // though the input field might become out of sync if changed elsewhere.
+
     if (changes.dailyLimit) {
       const newLimitValue = changes.dailyLimit.newValue || 60;
+      remainingTimeDisplay.textContent = formatTime(newLimitValue - spentTime);
       currentLimitDisplay.textContent = `${newLimitValue} min`;
-      updateRemainingProgessBar(todayRemainingTime, newLimitValue);
+      dailyLimit = newLimitValue;
+      updateRemainingProgessBar(spentTime, newLimitValue);
     }
   }
 });
