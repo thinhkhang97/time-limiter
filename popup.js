@@ -52,7 +52,7 @@ saveButton.addEventListener("click", () => {
     return;
   }
 
-  if (newLimit < spentTime / 60) {
+  if (newLimit * 60 < spentTime) {
     saveStatusDisplay.textContent = `You're already spent ${formatTime(
       spentTime
     )} of your limit!`;
@@ -82,7 +82,7 @@ function updateRemainingProgessBar(spentTime, dailyLimit = 60) {
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === "local") {
     if (changes.spentTime) {
-      const spentTime = changes.spentTime.newValue || 0;
+      spentTime = changes.spentTime.newValue || 0;
       remainingTimeDisplay.textContent = formatTime(dailyLimit - spentTime);
       updateRemainingProgessBar(spentTime, dailyLimit);
     }
