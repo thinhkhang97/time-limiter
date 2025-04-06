@@ -37,7 +37,7 @@ async function initialize() {
     currentDay: today,
   });
 
-  console.log("loaded state", state);
+  console.log("loaded state");
 }
 
 async function start() {
@@ -85,7 +85,6 @@ async function start() {
     console.log("onChanged", changes, namespace);
     if (namespace === "local") {
       if (changes.dailyLimit) {
-        console.log("dailyLimit changed", state.dailyLimit, changes.dailyLimit);
         const newDailyLimit = changes.dailyLimit.newValue;
         state.dailyLimit = newDailyLimit;
       }
@@ -96,7 +95,7 @@ async function start() {
 function getTodayString() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 }
 
 function isSocialMediaUrl(url) {
