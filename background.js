@@ -87,13 +87,6 @@ async function start() {
       if (changes.dailyLimit) {
         console.log("dailyLimit changed", state.dailyLimit, changes.dailyLimit);
         const newDailyLimit = changes.dailyLimit.newValue;
-        // const newRemainingTime =
-        //   newDailyLimit -
-        //   ((state.dailyLimit || DEFAULT_DAILY_LIMIT) -
-        //     state.todayRemainingTime);
-        // updateUserRemainingTime(
-        //   Math.min(Math.max(0, newRemainingTime), newDailyLimit)
-        // );
         state.dailyLimit = newDailyLimit;
       }
     }
@@ -102,15 +95,8 @@ async function start() {
 
 function getTodayString() {
   const now = new Date();
-  const today = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-    // 0,
-    // 0,
-    // 0
-  );
-  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}-${today.getHours()}-${today.getMinutes()}-${today.getSeconds()}`;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 }
 
 function isSocialMediaUrl(url) {
