@@ -85,8 +85,13 @@ async function start() {
     console.log("onChanged", changes, namespace);
     if (namespace === "local") {
       if (changes.dailyLimit) {
-        const newDailyLimit = changes.dailyLimit.newValue;
-        state.dailyLimit = newDailyLimit;
+        const spentTime =
+          changes.dailyLimit.oldValue - state.todayRemainingTime;
+        let newRemainingTime = changes.dailyLimit.newValue - spentTime;
+        if (newRemainingTime < 0) {
+          newRemainingTime = 0;
+        }
+        updateUserRemainingTime(newRemainingTime);
       }
     }
   });
