@@ -3,7 +3,7 @@
   "name": "Time Limiter",
   "version": "1.0",
   "description": "Limit the time you spend on social media",
-  "permissions": ["storage", "tabs", "alarms"],
+  "permissions": ["storage", "tabs", "alarms", "notifications", "idle"],
   "background": {
     "service_worker": "background.js"
   },

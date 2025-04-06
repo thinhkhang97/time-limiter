@@ -1,5 +1,9 @@
 const DEFAULT_DAILY_LIMIT = 60 * 60 * 1.5;
 const BLOCKED_URL = chrome.runtime.getURL("blocked.html");
+const STAND_UP_REMINDER_ALARM = "stand-up-reminder";
+const STAND_UP_REMINDER_INTERVAL = 30; // minutes
+const STAND_UP_REMINDER_MESSAGE =
+  "You've been on your seat for too long. Stand up and stretch your legs!🦵";
 
 const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
@@ -16,6 +20,14 @@ chrome.runtime.onInstalled.addListener(() => {
     dailyLimit: DEFAULT_DAILY_LIMIT,
     spentTime: 0,
   });
+  createStandUpReminderAlarm();
+});
+
+chrome.runtime.onSuspend.addListener(() => {
+  console.log("onSuspend");
+  chrome.alarms.clear(STAND_UP_REMINDER_ALARM);
+  clearInterval(state.intervalId);
+  state.intervalId = null;
 });
 
 async function initialize() {
@@ -158,4 +170,36 @@ function stopTracking() {
   }
 }
 
+function createStandUpReminderAlarm() {
+  chrome.alarms.get(STAND_UP_REMINDER_ALARM, (alarm) => {
+    if (!alarm) {
+      chrome.alarms.create(STAND_UP_REMINDER_ALARM, {
+        delayInMinutes: STAND_UP_REMINDER_INTERVAL,
+        periodInMinutes: STAND_UP_REMINDER_INTERVAL,
+      });
+      console.log("Stand up reminder alarm created");
+    } else {
+      console.log("Stand up reminder alarm already exists");
+    }
+  });
+}
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  console.log("onAlarm", alarm);
+  if (alarm.name === STAND_UP_REMINDER_ALARM) {
+    chrome.idle.queryState(15, (idleState) => {
+      console.log("idleState", idleState);
+      if (idleState === "active") {
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: "images/icon128.png",
+          title: "Time to move!🏃‍♂️‍➡️",
+          message: STAND_UP_REMINDER_MESSAGE,
+          buttons: [{ title: "Keep it flowing." }],
+          priority: 0,
+        });
+      }
+    });
+  }
+});
 start();
