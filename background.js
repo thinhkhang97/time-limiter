@@ -5,27 +5,30 @@ const STAND_UP_REMINDER_INTERVAL = 30; // minutes
 const STAND_UP_REMINDER_MESSAGE =
   "You've been on your seat for too long. Stand up and stretch your legs!🦵";
 
+const RESET_TIME_ALARM = "reset-time";
+const RESET_TIME_INTERVAL = 1000 * 60 * 60 * 24; // 24 hours
+
 const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
   spentTime: 0,
   socialMediaTabsSet: new Set(),
-  currentDay: getTodayString(),
   intervalId: null,
 };
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("onInstalled");
   chrome.storage.local.set({
-    currentDay: getTodayString(),
     dailyLimit: DEFAULT_DAILY_LIMIT,
     spentTime: 0,
   });
   createStandUpReminderAlarm();
+  createResetTimeAlarm();
 });
 
 chrome.runtime.onSuspend.addListener(() => {
   console.log("onSuspend");
   chrome.alarms.clear(STAND_UP_REMINDER_ALARM);
+  chrome.alarms.clear(RESET_TIME_ALARM);
   clearInterval(state.intervalId);
   state.intervalId = null;
 });
@@ -39,13 +42,6 @@ async function initialize() {
   const spentTimeResult = await chrome.storage.local.get("spentTime");
   state.spentTime = spentTimeResult.spentTime || 0;
 
-  const currentDayResult = await chrome.storage.local.get("currentDay");
-  const today = getTodayString();
-  state.currentDay = currentDayResult.currentDay || today;
-  await chrome.storage.local.set({
-    currentDay: today,
-  });
-
   console.log("loaded state");
 }
 
@@ -58,12 +54,6 @@ async function start() {
 
   chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log("onActivated", activeInfo);
-    if (state.currentDay !== getTodayString()) {
-      resetTracking();
-      chrome.storage.local.set({
-        currentDay: getTodayString(),
-      });
-    }
     if (state.socialMediaTabsSet.has(activeInfo.tabId)) {
       startTracking();
     } else {
@@ -94,22 +84,10 @@ async function start() {
     console.log("onChanged", changes, namespace);
     if (namespace === "local") {
       if (changes.dailyLimit) {
-        // const spentTime = changes.dailyLimit.oldValue - state.spentTime;
-        // let newRemainingTime = changes.dailyLimit.newValue - spentTime;
-        // if (newRemainingTime < 0) {
-        //   newRemainingTime = 0;
-        // }
-        // updateUserRemainingTime(newRemainingTime);
         state.dailyLimit = changes.dailyLimit.newValue;
       }
     }
   });
-}
-
-function getTodayString() {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 }
 
 function isSocialMediaUrl(url) {
@@ -184,6 +162,28 @@ function createStandUpReminderAlarm() {
   });
 }
 
+function createResetTimeAlarm() {
+  chrome.alarms.get(RESET_TIME_ALARM, (alarm) => {
+    if (!alarm) {
+      const today = new Date();
+      const tomorrow = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + 1
+      );
+      const delayInMinutes =
+        (tomorrow.getTime() - today.getTime()) / (1000 * 60);
+      chrome.alarms.create(RESET_TIME_ALARM, {
+        delayInMinutes,
+        periodInMinutes: 1000 * 60 * 60 * 24,
+      });
+      console.log("Reset time alarm created");
+    } else {
+      console.log("Reset time alarm already exists");
+    }
+  });
+}
+
 chrome.alarms.onAlarm.addListener((alarm) => {
   console.log("onAlarm", alarm);
   if (alarm.name === STAND_UP_REMINDER_ALARM) {
@@ -202,4 +202,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     });
   }
 });
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === RESET_TIME_ALARM) {
+    resetTracking();
+  }
+});
+
 start();
