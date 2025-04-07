@@ -6,7 +6,7 @@ const STAND_UP_REMINDER_MESSAGE =
   "You've been on your seat for too long. Stand up and stretch your legs!🦵";
 
 const RESET_TIME_ALARM = "reset-time";
-const RESET_TIME_INTERVAL = 60 * 60 * 24; // 24 hours
+const RESET_TIME_INTERVAL = 60 * 24; // minutes
 
 const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
@@ -175,7 +175,7 @@ function createResetTimeAlarm() {
         (tomorrow.getTime() - today.getTime()) / (1000 * 60);
       chrome.alarms.create(RESET_TIME_ALARM, {
         delayInMinutes,
-        periodInMinutes: 60 * 60 * 24,
+        periodInMinutes: 60 * 24,
       });
       console.log("Reset time alarm created");
     } else {
