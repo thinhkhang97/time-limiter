@@ -120,10 +120,10 @@ function blockUser() {
 
 function resetTracking() {
   console.log("Resetting tracking");
-  updateUserSpentTime(state.dailyLimit);
+  updateUserSpentTime(0);
   clearInterval(state.intervalId);
   state.intervalId = null;
-  state.spentTime = state.dailyLimit;
+  state.spentTime = 0;
 }
 
 function startTracking() {
