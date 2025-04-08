@@ -6,7 +6,6 @@ const STAND_UP_REMINDER_MESSAGE =
   "You've been on your seat for too long. Stand up and stretch your legs!🦵";
 
 const RESET_TIME_ALARM = "reset-time";
-const RESET_TIME_INTERVAL = 60 * 24; // minutes
 
 const state = {
   dailyLimit: DEFAULT_DAILY_LIMIT,
