@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Limiter - Configuration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- CSS Styles (Copied from your provided code) --- */
+      :root {
+        /* Dark Theme Palette */
+        --bg-dark-start: #2d3748; /* Dark Slate */
+        --bg-dark-end: #1a202c; /* Darker Slate */
+        --text-dark-primary: #e2e8f0; /* Light Slate (Default Text) */
+        --text-dark-secondary: #a0aec0; /* Medium Slate (Muted/Footer) */
+        --text-muted-color: var(--text-dark-secondary); /* Alias for clarity */
+        --border-color: #4a5568; /* Medium-Dark Slate */
+        --input-bg-color: #4a5568; /* Medium-Dark Slate */
+        --input-border-color: #718096; /* Medium Slate */
+        --success-color: #68d391; /* Green */
+        --success-pulse-color: #48bb78; /* Darker Green */
+        --error-color: #e53e3e; /* Red for errors */
+
+        /* Progress Bar & Button Gradient Colors */
+        --progress-track-color: #1a202c; /* Darker background for track */
+        --fill-start: #4299e1; /* Blue */
+        --fill-end: #38b2ac; /* Cyan/Teal */
+
+        /* Button Hover/Active Gradient Colors */
+        --fill-hover-start: #3182ce; /* Darker Blue */
+        --fill-hover-end: #2c9a94; /* Darker Cyan/Teal */
+        --fill-active-start: #2b6cb0; /* Even Darker Blue */
+        --fill-active-end: #26817d; /* Even Darker Cyan/Teal */
+      }
+
+      /* Ensure HTML takes full height */
+      html {
+        min-height: 100vh;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0; /* Remove default body margin */
+        padding: 25px; /* More padding for a settings page */
+        min-width: 300px; /* Slightly wider for settings */
+        background: linear-gradient(
+          to bottom,
+          var(--bg-dark-start),
+          var(--bg-dark-end)
+        );
+        background-repeat: no-repeat; /* Prevent gradient repeating */
+        background-attachment: fixed; /* Keep gradient fixed during scroll */
+        color: var(--text-dark-primary);
+        border-radius: 8px;
+        min-height: 100vh; /* Ensure body takes at least full viewport height */
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box; /* Include padding in height calculation */
+      }
+
+      /* Wrapper for content */
+      .config-content {
+        width: 100%;
+        max-width: 400px; /* Limit max width for readability */
+        margin: 20px auto; /* Center content horizontally, allow vertical margin */
+        flex-grow: 1; /* Allow content to push footer down if needed */
+        display: flex; /* Use flex to manage internal spacing if needed */
+        flex-direction: column; /* Stack elements vertically */
+      }
+
+      h3 {
+        margin-top: 0;
+        color: var(--text-dark-primary);
+        text-align: center;
+        font-size: 1.5em; /* Slightly larger title */
+        font-weight: 700;
+        margin-bottom: 30px; /* More space below title */
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px; /* More space below label */
+        font-weight: 600;
+        color: var(--text-muted-color);
+        font-size: 1em;
+      }
+
+      .input-button-row {
+        display: flex;
+        align-items: center;
+        gap: 15px; /* More gap between input and button */
+        margin-bottom: 5px;
+      }
+
+      .limit-note {
+        font-size: 0.85em; /* Slightly larger note */
+        color: var(--text-muted-color);
+        text-align: left;
+        padding-left: 2px;
+        margin-top: 8px; /* More space above note */
+      }
+
+      input[type="number"] {
+        background-color: var(--input-bg-color);
+        color: var(--text-dark-primary);
+        padding: 10px 12px; /* Slightly larger padding */
+        border: 1px solid var(--input-border-color);
+        border-radius: 6px;
+        font-size: 1em;
+        margin-bottom: 0;
+        /* width: 62%; */ /* Let flexbox handle width */
+        flex-grow: 1; /* Allow input to grow */
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input[type="number"]:focus {
+        outline: none;
+        border-color: var(--fill-start);
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+      }
+
+      /* Hide number input spinners */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      button {
+        background: linear-gradient(
+          to right,
+          var(--fill-start, #4299e1),
+          var(--fill-end, #38b2ac)
+        );
+        color: white;
+        padding: 10px 15px; /* Slightly larger padding */
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95em; /* Slightly larger font */
+        font-weight: 600;
+        transition: background 0.2s ease, transform 0.1s ease, filter 0.2s ease;
+        /* width: 35%; */ /* Let flexbox handle width */
+        min-width: 80px; /* Ensure button has minimum width */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        line-height: 1.4;
+        flex-shrink: 0; /* Prevent button from shrinking */
+      }
+
+      button:hover {
+        background: linear-gradient(
+          to right,
+          var(--fill-hover-start, #3182ce),
+          var(--fill-hover-end, #2c9a94)
+        );
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        background: linear-gradient(
+          to right,
+          var(--fill-active-start, #2b6cb0),
+          var(--fill-active-end, #26817d)
+        );
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      /* Status message styling */
+      #save-status {
+        margin-top: 20px;
+        font-weight: 600;
+        color: var(--success-color); /* Default to success color */
+        height: 1.2em;
+        text-align: center;
+        transition: color 0.3s ease, opacity 0.3s ease;
+        font-size: 0.95em;
+        opacity: 0; /* Hidden by default */
+      }
+
+      #save-status.visible {
+        opacity: 1;
+      }
+
+      #save-status.error {
+        color: var(--error-color);
+      }
+
+      /* Current settings display */
+      .current-settings {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 25px;
+      }
+
+      .current-settings p {
+        margin: 0;
+        font-size: 0.9em;
+        color: var(--text-muted-color);
+      }
+
+      .current-settings strong {
+        color: var(--text-dark-primary);
+        font-weight: 600;
+      }
+
+      /* --- About Link Styles --- */
+      .about-link {
+        display: block; /* Ensure it takes its own line */
+        text-align: center;
+        margin-top: 40px; /* More space above the link */
+        margin-bottom: 20px; /* Add some space at the very bottom */
+        font-size: 0.9em;
+        color: var(--text-muted-color);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        flex-shrink: 0; /* Prevent link from shrinking */
+      }
+
+      .about-link:hover {
+        color: var(--text-dark-primary); /* Slightly brighten on hover */
+        text-decoration: underline;
+      }
+      /* --- End About Link Styles --- */
+
+      .saved-animation {
+        animation: pulse 1s ease;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="config-content">
+      <h3>Configure Time Limit</h3>
+
+      <div class="current-settings">
+        <p>Current daily limit: <strong id="current-limit">...</strong></p>
+      </div>
+
+      <div class="setting">
+        <label for="limit-input">Daily Limit (minutes):</label>
+        <div class="input-button-row">
+          <input
+            type="number"
+            id="limit-input"
+            min="1"
+            max="90"
+            placeholder="e.g., 30"
+          />
+          <button id="save-button">Save</button>
+        </div>
+        <p class="limit-note">
+          Enter the maximum minutes you want to spend per day (1-90).
+        </p>
+      </div>
+
+      <div id="save-status"></div>
+
+      <div style="flex-grow: 1"></div>
+
+      <a href="about.html" target="_blank" class="about-link"
+        >About Time Limiter</a
+      >
+    </div>
+
+    <script src="config.js"></script>
+  </body>
+</html>
